@@ -1,0 +1,37 @@
+services:
+
+  prediction-service:
+    build: .
+    container_name: prediction-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/predictions
+      SPRING_DATASOURCE_USERNAME: splash_user
+      SPRING_DATASOURCE_PASSWORD: splash_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    networks:
+      - splash-net
+
+  postgres:
+    image: postgres:15
+    container_name: splash-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: predictions
+      POSTGRES_USER: splash_user
+      POSTGRES_PASSWORD: splash_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - splash-net
+
+volumes:
+  pgdata:
+
+networks:
+  splash-net:
